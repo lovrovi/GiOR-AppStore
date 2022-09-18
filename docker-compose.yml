@@ -1,0 +1,64 @@
+version: '3.7'
+
+networks:
+  appstore-dev:
+    driver: bridge
+
+services:
+  # api:
+  #   container_name: api
+  #   image: appstoreapi
+  #   build:
+  #     context: ./backend/
+  #     dockerfile: AppStore/Dockerfile
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - 5000:80
+  #   environment:
+  #     - "ConnectionStrings: DBConnection=Server=db;Port=5432;Database=appstore;User Id=postgres;Password=postgres;"
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ASPNETCORE_URLS=https://+:443;http://+:80
+  #   volumes:
+  #     - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+  #     - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  #   networks:
+  #     - appstore-dev
+
+  db:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - 5433:5432
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=appstore
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - appstore-dev
+
+  # react:
+  #   container_name: client
+  #   image: appstoreclient
+  #   build:
+  #     context: ./frontend/
+  #     dockerfile: Dockerfile
+  #     args:
+  #       REACT_APP_SECRET: "ThisIsMySuperSecretKeyThatNoOneKnows"
+  #       REACT_APP_API_BASE_URL: "http://localhost:5000/api"
+  #   volumes:
+  #     - react-app:/client/src:/app
+  #     - react-app:/app/node_modules
+  #   ports:
+  #     - 3001:3000
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true
+  #   networks:
+  #     - appstore-dev
+  #   stdin_open: true
+
+volumes:
+  db_volume:
+  react-app:
