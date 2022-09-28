@@ -12,5 +12,6 @@ namespace AppStore.Data
 
         public DbSet<Tool> Tools { get; set; }
         public DbSet<Producer> Producers { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

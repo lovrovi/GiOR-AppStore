@@ -2,7 +2,7 @@ import { TextField } from '@mui/material';
 import React from 'react';
 import { useController } from 'react-hook-form';
 
-export const ControlledTextField = ({ name, control, multiline }) => {
+export const ControlledTextField = ({ name, control, multiline, ...props }) => {
   const {
     field: { onChange, onBlur, value },
     fieldState: { error },
@@ -23,6 +23,7 @@ export const ControlledTextField = ({ name, control, multiline }) => {
       InputLabelProps={{ sx: { textTransform: 'capitalize' } }}
       multiline={multiline}
       sx={{ mt: 2 }}
+      {...props}
     />
   );
 };

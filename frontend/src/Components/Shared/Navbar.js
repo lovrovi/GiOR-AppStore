@@ -9,6 +9,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 // import useIsLoggedIn from "../../Hooks/useIsLoggedIn";
 // import { Button } from './Button';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { useVerifyToken } from 'Api/Login/Verify';
 
 export const Navbar = ({ title }) => {
   const navigate = useNavigate();
@@ -26,6 +27,10 @@ export const Navbar = ({ title }) => {
     navigate(-1);
   };
 
+  const { isError, isSuccess } = useVerifyToken();
+
+  console.log('er', isError);
+  console.log('suc', isSuccess);
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -40,7 +45,12 @@ export const Navbar = ({ title }) => {
             >
               <ArrowBackIosNewIcon />
             </IconButton>
-            <Typography variant="h5" component="div" edge="start" sx={{ flexGrow: 1 }}>
+            <Typography
+              variant="h5"
+              component="div"
+              edge="start"
+              sx={{ flexGrow: 1 }}
+            >
               {title}
             </Typography>
             {/* <Box sx={{ display: { xs: "none", md: "flex" }, mr: 3 }}>

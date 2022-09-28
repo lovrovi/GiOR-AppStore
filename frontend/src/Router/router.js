@@ -5,12 +5,14 @@ import { Tools } from 'Components/Tools/Tools';
 import { ToolsCreate } from 'Components/Tools/ToolsCreate';
 import { ToolsDetails } from 'Components/Tools/ToolsDetails';
 import { ToolsEdit } from 'Components/Tools/ToolsEdit';
+import { Login } from 'Components/Login/Login';
 
 export const routes = {
   TOOLS: '/tools',
   TOOLS_DETAILS: '/tools/:id',
   TOOLS_CREATE: '/tools/add',
   TOOLS_EDIT: '/tools/:id/edit',
+  LOGIN: '/login',
 };
 
 export const router = createBrowserRouter([
@@ -20,7 +22,10 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // path: routes.TOOLS,
+        element: <Login />,
+      },
+      {
+        path: routes.TOOLS,
         element: <Tools />,
       },
       {
