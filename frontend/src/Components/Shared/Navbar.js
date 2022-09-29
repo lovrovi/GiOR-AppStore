@@ -5,32 +5,23 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-// import { saveToken } from "../../Redux/Actions/auth/auth";
-// import useIsLoggedIn from "../../Hooks/useIsLoggedIn";
-// import { Button } from './Button';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useVerifyToken } from 'Api/Login/Verify';
+import { Button } from 'Components/Shared/Button';
+import { generatePath, Outlet, useNavigate } from 'react-router-dom';
+import { routes } from 'Router/router';
+import { hasToken } from 'lib/helpers/hasToken';
 
 export const Navbar = ({ title }) => {
   const navigate = useNavigate();
 
-  // const isLoggedIn = useIsLoggedIn();
-  // const history = useHistory();
-  // const dispatch = useDispatch();
-
-  // const logoutHandler = () => {
-  //   dispatch(saveToken(null));
-  //   history.push(generateLink(routes.LOGIN));
-  // };
+  const logoutHandler = () => {
+    localStorage.removeItem('token');
+    navigate(generatePath(routes.LOGIN));
+  };
 
   const goBackHandler = () => {
     navigate(-1);
   };
 
-  const { isError, isSuccess } = useVerifyToken();
-
-  console.log('er', isError);
-  console.log('suc', isSuccess);
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -53,30 +44,15 @@ export const Navbar = ({ title }) => {
             >
               {title}
             </Typography>
-            {/* <Box sx={{ display: { xs: "none", md: "flex" }, mr: 3 }}>
-      <Button
-        // onClick={() => history.push(generateLink(routes.CATEGORIES))}
-        sx={{ color: "white", display: "block" }}
-        text="Categories"
-      />
 
-      {isLoggedIn ? (
-        <Button
-          // onClick={() => history.push(generateLink(routes.INGREDIENTS))}
-          sx={{ color: "white", display: "block" }}
-          text="Ingredients"
-        />
-      ) : (
-        <></>
-      )}
-    </Box> */}
-
-            {/* <Button
-      variant="outlined"
-      color="inherit"
-      // onClick={logoutHandler}
-      // text={isLoggedIn ? "Logout" : "Login"}
-    /> */}
+            {hasToken() && (
+              <Button
+                variant="outlined"
+                color="inherit"
+                onClick={logoutHandler}
+                text="Logout"
+              />
+            )}
           </Toolbar>
         </AppBar>
       </Box>

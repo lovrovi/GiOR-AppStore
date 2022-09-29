@@ -7,10 +7,20 @@ import { TOOL_TYPES } from 'lib/constants';
 import { useGetAllProducers } from 'Api/Producers/GetAll';
 import { usePostTool } from 'Api/Tools/Post';
 import { Button } from 'Components/Shared/Button';
+import { useSecuredRoute } from 'lib/hooks/useSecuredRoute';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ToolSchema } from 'lib/validators/ToolValidator';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { routes } from 'Router/router';
 
 export const ToolsCreate = () => {
+  useSecuredRoute();
+  const navigate = useNavigate();
+
   const { data: producers } = useGetAllProducers();
-  const { mutate } = usePostTool();
+  const { mutate } = usePostTool({
+    onSuccess: () => navigate(generatePath(routes.TOOLS)),
+  });
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -20,6 +30,7 @@ export const ToolsCreate = () => {
       type: '',
       producerId: '',
     },
+    resolver: yupResolver(ToolSchema),
   });
 
   return (

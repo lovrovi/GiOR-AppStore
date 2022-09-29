@@ -48,7 +48,7 @@ namespace AppStore.Controllers
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
               _config["Jwt:Issuer"],
               claims,
-              expires: DateTime.Now.AddMinutes(1),
+              expires: DateTime.Now.AddMinutes(60),
               signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -73,8 +73,8 @@ namespace AppStore.Controllers
             return Ok(tokenString);
         }
 
-        [HttpPost("verify")]
-        public async Task<ActionResult> Verify(string token)
+        [HttpGet("verify")]
+        public async Task<ActionResult> Verify([FromQuery] string token)
         {
             var key = "jwt:" + token;
             IDatabase db = _redis.GetDatabase();
@@ -82,7 +82,7 @@ namespace AppStore.Controllers
 
             if (cachedToken.IsNullOrEmpty)
             {
-                return NotFound();
+                return NotFound("Token not found");
             }
 
             try
@@ -100,12 +100,11 @@ namespace AppStore.Controllers
                     ClockSkew = TimeSpan.Zero,
                 };
 
-                SecurityToken validatedToken;
-                IPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+                IPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
             }
-            catch (Exception ex)
+            catch
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Token expired");
             }
 
 

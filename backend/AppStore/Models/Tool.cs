@@ -13,7 +13,6 @@ namespace AppStore.Models
         public Producer Producer { get; set; }
     }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ToolType
     {
         Measuring = 1, 

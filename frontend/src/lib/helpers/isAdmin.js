@@ -1,9 +1,11 @@
-import jwt from 'jsonwebtoken';
+import jwt_decode from 'jwt-decode';
 
 export const isAdmin = () => {
   const token = localStorage.getItem('token');
-  var decodedToken = jwt.decode(token, { complete: true });
+  if (!token) return false;
 
-  if (decodedToken.payload.Role === 'Admin') return true;
+  const decodedToken = jwt_decode(token);
+
+  if (decodedToken.Role === 'Admin') return true;
   return false;
 };

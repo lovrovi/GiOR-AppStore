@@ -1,6 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import { Stack } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -12,13 +13,21 @@ import { TOOL_TYPES } from 'lib/constants';
 import { Button } from 'Components/Shared/Button';
 import { ControlledSelect } from 'Components/Shared/ControlledSelect';
 import { ControlledTextField } from 'Components/Shared/ControlledTextField';
+import { useSecuredRoute } from 'lib/hooks/useSecuredRoute';
+import { isAdmin } from 'lib/helpers/isAdmin';
+import { ToolSchema } from 'lib/validators/ToolValidator';
+import { routes } from 'Router/router';
 
 export const ToolsEdit = () => {
+  useSecuredRoute();
   let { id } = useParams();
+  const navigate = useNavigate();
 
   const { data: producers } = useGetAllProducers();
-  const { data: toolData, isFetched } = useGetToolsById(id);
-  const { mutate } = usePutTool(id);
+  const { data: toolData, isFetched, isLoading } = useGetToolsById(id);
+  const { mutate } = usePutTool(id, {
+    onSuccess: () => navigate(generatePath(routes.TOOLS)),
+  });
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -28,11 +37,14 @@ export const ToolsEdit = () => {
       type: toolData?.type ?? '',
       producerId: toolData?.producerId ?? '',
     },
+    resolver: yupResolver(ToolSchema),
   });
 
   useEffect(() => {
     if (isFetched) reset(toolData);
   }, [isFetched, reset, toolData]);
+
+  const disabled = !isAdmin();
 
   return (
     <Suspense fallback={<CircularProgress />}>
@@ -42,22 +54,42 @@ export const ToolsEdit = () => {
         component="form"
         onSubmit={handleSubmit(mutate)}
       >
-        <ControlledTextField control={control} name="name" />
-        <ControlledTextField control={control} name="description" />
-        <ControlledTextField control={control} name="price" />
-        <ControlledSelect
-          control={control}
-          name="type"
-          label="Tool type:"
-          data={TOOL_TYPES}
-        />
-        <ControlledSelect
-          control={control}
-          name="producerId"
-          label="Producer:"
-          data={producers}
-        />
-        <Button type="submit" text="submit" />
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <>
+            <ControlledTextField
+              control={control}
+              name="name"
+              disabled={disabled}
+            />
+            <ControlledTextField
+              control={control}
+              name="description"
+              disabled={disabled}
+            />
+            <ControlledTextField
+              control={control}
+              name="price"
+              disabled={disabled}
+            />
+            <ControlledSelect
+              control={control}
+              name="type"
+              label="Tool type:"
+              data={TOOL_TYPES}
+              disabled={disabled}
+            />
+            <ControlledSelect
+              control={control}
+              name="producerId"
+              label="Producer:"
+              data={producers}
+              disabled={disabled}
+            />
+            {!disabled && <Button type="submit" text="submit" />}
+          </>
+        )}
       </Stack>
     </Suspense>
   );

@@ -14,6 +14,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { routes } from 'Router/router';
 import { useDeleteTool } from 'Api/Tools/Delete';
+import { isAdmin } from 'lib/helpers/isAdmin';
 
 export const Card = ({ title, text, children, id }) => {
   const navigate = useNavigate();
@@ -36,9 +37,16 @@ export const Card = ({ title, text, children, id }) => {
     setAnchorEl(null);
   };
 
+  const isAdminRole = isAdmin();
+
   return (
     <MaterialCard
-      sx={{ maxWidth: 550, display: 'inline-block', margin: '10px 60px' }}
+      sx={{
+        maxWidth: 550,
+        display: 'inline-block',
+        margin: '30px 60px',
+        minWidth: 300,
+      }}
     >
       <CardHeader
         action={
@@ -63,19 +71,21 @@ export const Card = ({ title, text, children, id }) => {
             >
               <MenuItem onClick={handleEdit}>
                 <EditIcon />
-                Edit
+                {isAdminRole ? 'Edit' : 'Details'}
               </MenuItem>
-              <MenuItem onClick={handleDelete}>
-                <DeleteForeverIcon />
-                Delete
-              </MenuItem>
+              {isAdminRole && (
+                <MenuItem onClick={handleDelete}>
+                  <DeleteForeverIcon />
+                  Delete
+                </MenuItem>
+              )}
             </Menu>
           </>
         }
         title={title}
       />
       <CardContent>
-        <Typography variant="body2">{text}</Typography>
+        <Typography>{text}</Typography>
       </CardContent>
       <CardActions>{children}</CardActions>
     </MaterialCard>

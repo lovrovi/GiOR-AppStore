@@ -4,7 +4,18 @@ import { useQuery } from '@tanstack/react-query';
 const verifyToken = async () => {
   const token = localStorage.getItem('token');
 
-  return await axios.post('/login/verify', token);
+  if (!token) return false;
+
+  return await axios
+    .get('/login/verify', { params: { token: token } })
+    .catch((err) => {
+      if (
+        (err.response.status === 404 &&
+          err.response.data === 'Token not found') ||
+        (err.response.status === 400 && err.response.data === 'Token expired')
+      )
+        return false;
+    });
 };
 
 export const useVerifyToken = (options) => {

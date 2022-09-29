@@ -92,7 +92,8 @@ namespace AppStore.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(tool).State = EntityState.Modified;
+            var mappedTool = _mapper.Map<Tool>(tool);
+            _context.Entry(mappedTool).State = EntityState.Modified;
 
             try
             {
